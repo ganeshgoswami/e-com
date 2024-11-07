@@ -1,0 +1,20 @@
+@keyframes rotateIn {
+    0% {
+      transform: rotateY(180deg);
+      opacity: 0;
+    }
+    100% {
+      transform: rotateY(0deg);
+      opacity: 1;
+    }
+  }
+  
+  .rotate-card {
+    animation: rotateIn 1s ease-in-out forwards;
+    transform-origin: top;
+  }
+  
+  .text {
+    color: white;
+    text-shadow: 1px 5px 2px black, 0 0 5px orchid;;
+  }

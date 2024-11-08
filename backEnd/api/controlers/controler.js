@@ -172,7 +172,18 @@ exports.addtoCart = async(req,res) =>{
         OrderDate: new Date(),
       });
 
-      // record.save();
+      record.save();
+
+      const bookToUpdate = await Books.findOne({ _id: id }); // Assuming you have a Books model
+      if (bookToUpdate) {
+        bookToUpdate.Quantity -= BookQuantity;
+        
+        // Ensure the quantity doesn't go below zero
+        if (bookToUpdate.Quantity < 0) {
+          bookToUpdate.Quantity = 0;
+        }
+        await bookToUpdate.save();
+      }
 
       res.json({
         statusCode: 202,

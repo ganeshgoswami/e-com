@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 const Home = () => {
   const { books,user, orders, setbooks,setOrders ,neworderBook} = useContext(AuthContext);
   const [showCart, setShowCart] = useState(false); // State to control cart modal visibility
-  const [updateArrData,setupdateArrData] = useState(null)
  const navigate  = useNavigate();
 
   const addToCart = (id) => {
@@ -49,7 +48,7 @@ const Home = () => {
       );
   
       // Update both books and orders states to reflect changes
-      setupdateArrData(updatedBooks);
+      setbooks(updatedBooks)
       setOrders(updatedOrders);
       setShowCart(true)
     } else {
@@ -67,60 +66,84 @@ const Home = () => {
     setShowCart(!showCart);
   };
 
-  const paymentDone =(cart,userId) =>{
-    // setbooks(updateArrData);
-    neworderBook(cart,userId,updateArrData) 
-    navigate("/login")
-  }
+  const paymentDone = (cart, userId) => {
+    
+    console.log(books)
+    // Reduce the quantities in the state
+    const updatedBooksAfterPayment = books.map((book) => {
+      const itemInCart = cart.cart.items.find(cartItem => cartItem.id === book._id);
+      if (itemInCart) {
+        
+        // Reduce the book's quantity by the number of items in the cart
+        return { ...book, Quantity: book.Quantity - itemInCart.BookQuantity };
+      }
+      return book;
+    });
+  
+    // Call a function to update the backend database
+    neworderBook(cart, userId, updatedBooksAfterPayment);
+    setShowCart(true)
+    // Navigate after completing the order
+    navigate("/paymentDone");
+  };
+  
 
   return (
     <div className="container m-2">
       <div className="row">
         {books.length > 0 ? (
           books.map((book) => (
-            <div
-              className="col-lg-4 col-md-6 col-sm-12 mb-3"
-              key={book._id}
-            >
-              <div className="card h-100 p-2 text-center shadow-lg p-3 mb-5 bg-body-tertiary rounded">
-                <div className={book.Stock ? "opacity-50" : ""}>
-                  <h5 className="text-danger">
-                    {book.BookName} {" (By " + book.Writer + ")"}
-                  </h5>
-                  <div className="text-center">
-                    <img
-                      src={book.Image}
-                      alt={book.title}
-                      className="img-fluid"
-                      style={{ maxWidth: "150px", maxHeight: "120px" }}
-                    />
-                  </div>
-                  <div className="card-body">
-                    <p className="card-text">
-                      <span className="text-success">
-                        <b>Title:</b> {book.Titel}
-                      </span>
-                    </p>
-                    <p>
-                      <b>Price: </b>₹ <b>{book.Price}.00 </b>{" "}
-                      <del className="text-danger">
-                        <small>₹{(book.Price / 100) * 110}.00</small>
-                      </del>
-                    </p>
-                    <p>
-                      <b>Available: </b> {book.Quantity} copies
-                    </p>
-                  </div>
-                  <button
-                    className="btn btn-sm btn-primary"
-                    onClick={() => addToCart(book._id)}
-                    disabled={book.Quantity <= 0}
-                  >
-                    {book.Quantity > 0 ? "Buy" : "Out of Stock"}
-                  </button>
+
+            <>
+           {
+            book.Stock 
+            ? "" 
+            :  <div
+            className="col-lg-4 col-md-6 col-sm-12 mb-3"
+            key={book._id}
+          >
+            <div className="card h-100 p-2 text-center shadow-lg p-3 mb-5 bg-body-tertiary rounded">
+              <div className={book.Stock ? "opacity-50" : ""}>
+                <h5 className="text-danger">
+                  {book.BookName} {" (By " + book.Writer + ")"}
+                </h5>
+                <div className="text-center">
+                  <img
+                    src={book.Image}
+                    alt={book.title}
+                    className="img-fluid"
+                    style={{ maxWidth: "150px", maxHeight: "120px" }}
+                  />
                 </div>
+                <div className="card-body">
+                  <p className="card-text">
+                    <span className="text-success">
+                      <b>Title:</b> {book.Titel}
+                    </span>
+                  </p>
+                  <p>
+                    <b>Price: </b>₹ <b>{book.Price}.00 </b>{" "}
+                    <del className="text-danger">
+                      <small>₹{(book.Price / 100) * 110}.00</small>
+                    </del>
+                  </p>
+                  <p>
+                    <b>Available: </b> {book.Quantity} copies
+                  </p>
+                </div>
+                <button
+                  className="btn btn-sm btn-primary"
+                  onClick={() => addToCart(book._id)}
+                  disabled={book.Quantity <= 0}
+                >
+                  {book.Quantity > 0 ? "Buy" : "Out of Stock"}
+                </button>
               </div>
             </div>
+          </div>
+           }
+            </>
+
           ))
         ) : (
           <p>No Books found.</p>

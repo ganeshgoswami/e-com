@@ -9,7 +9,7 @@ import BookStoreAdmin from "./admin/bookStoreAdmin";
 import NavbarAdmin from "./admin/navbarAdmin";
 import { useEffect, useState } from "react";
 import NavbarUser from "./components/navbarUser";
-import AddCart from "./pages/addCart";
+import PaymentDone from "./pages/paymentDone";
 
 function App() {
   const [admin, setAdmin] = useState(null);
@@ -40,7 +40,7 @@ function App() {
         <Route path="/bookStore" element={<BookStoreAdmin />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/addCart" element={<AddCart />} />
+        <Route path="/paymentDone" element={<PaymentDone />} />
       </Routes>
     </div>
   );

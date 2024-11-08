@@ -20,7 +20,7 @@ useEffect(()=>{
   allOrders();
   setUser(getUser)
 },[])
-
+console.log(books)
 // Admin Block 
 
 // add book 
@@ -35,8 +35,8 @@ useEffect(()=>{
     }).then((res)=>res.json()).then((data)=>{
       if (data.data._id != null){
         console.log("Book Successfully Add")
-        navigate("/bookStore")
-        allbooks()
+        navigate("/bookStore");
+        allbooks();
       }
       else{
         alert("Same Book ,Add Diffrent Book")
@@ -158,24 +158,23 @@ useEffect(()=>{
   };
   
   const neworderBook = (cart,userId,bookupdatedata) =>{
-    debugger
     fetch(`http://localhost:5000/addCart`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ Cart: cart.cart.items , userId : userId }),
+      body: JSON.stringify({ Cart: cart.cart.items , userId : userId , updatedBooks: bookupdatedata }),
     })
       .then((res) => res.json())
       .then((data) => {
-        setbooks(bookupdatedata);
         console.log("Order successfully Added", data);
-        allbooks();
+        alert("Order is Successfully Submit")
+        // allbooks();
       })
       .catch((err) => console.log("Error updating Order Status:", err));
   }
 
-  console.log(allusers)
+ 
   return (
     <AuthContext.Provider
       value={{
